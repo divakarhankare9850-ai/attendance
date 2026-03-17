@@ -5,7 +5,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 export default function App() {
 
   // total students
-  const totalStudents = 80;
+  const totalStudents = 71;
 
   // generate roll numbers
   const rollNumbers = Array.from({ length: totalStudents }, (_, i) => i + 1);
