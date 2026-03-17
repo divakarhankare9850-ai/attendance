@@ -132,52 +132,66 @@ export default function App() {
         </button>
 
       </div>
-
       {/* Result Section */}
 
       {result && (
 
         <div style={{
-          marginTop: 40,
-          padding: 20,
-          border: "1px solid #ddd",
-          borderRadius: "10px"
-        }}>
+        marginTop: 40,
+        padding: 20,
+        border: "1px solid #ddd",
+        borderRadius: "10px"
+      }}>
 
-          <h2>Attendance Summary</h2>
+        <h2>Attendance Summary</h2>
 
           <p><b>Present Count:</b> {result.presentCount}</p>
-
           <p><b>Absent Count:</b> {result.absentCount}</p>
-
-          <p><b>Absent Roll Numbers:</b></p>
+  
+          {/* Present Numbers */}
+          <h3>Present Roll Numbers</h3>
 
           <div style={{
-            background: "#f5f5f5",
+            background: "#e8f5e9",
             padding: "10px",
             borderRadius: "6px",
-            marginBottom: "10px"
-          }}>
-            {result.absentList.join(", ")}
+            marginBottom: "20px"
+             }}>
+            {present.sort((a,b)=>a-b).join(", ")}
           </div>
+
+
+          {/* Absent Numbers */}
+
+          <h3>Absent Roll Numbers</h3>
+
+          <div style={{
+            background: "#ffebee",
+            padding: "10px",
+            borderRadius: "6px",
+            marginBottom: "15px"
+          }}>
+          {result.absentList.join(", ")}
+          </div>
+
+          {/* Copy Button */}
 
           <button
             onClick={copyAbsent}
             style={{
-              padding: "10px 20px",
-              background: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer"
-            }}
-          >
+            padding: "10px 20px",
+            background: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer"
+            }} >
             Copy Absent List
           </button>
+  
+          </div>
 
-        </div>
-
-      )}
+        )}
 
     </div>
   );
