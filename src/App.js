@@ -56,16 +56,16 @@ export default function App() {
   };
 
   // copy absent numbers
-  const copyAbsent = () => {
+const copyAbsent = () => {
 
-    if (!result) return;
+  if (!result) return;
 
-    const text = result.absentList.join(", ");
+  const message = `Absent Roll Numbers:\n${result.absentList.join(", ")}`;
 
-    navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(message);
 
-    alert("Absent list copied!");
-  };
+  alert("Absent list copied!");
+};
 
   return (
 
@@ -75,10 +75,6 @@ export default function App() {
       <h1 style={{ textAlign: "center" }}>
         Daily Class Attendance
       </h1>
-
-      <h3 style={{ textAlign: "center", marginBottom: 30 }}>
-        Date: {today}
-      </h3>
 
       {/* Roll Grid */}
       <div style={{
