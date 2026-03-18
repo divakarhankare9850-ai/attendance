@@ -25,8 +25,8 @@ export default function App() {
 
     try {
       await setDoc(doc(db, "attendance", today), {
-        present: present,
-        absent: absent,
+        present,
+        absent,
         timestamp: serverTimestamp()
       });
 
@@ -57,30 +57,35 @@ export default function App() {
 
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #667eea, #764ba2)",
+      background: "linear-gradient(135deg, #1f4037, #99f2c8)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
       padding: 20,
-      fontFamily: "Arial, sans-serif"
+      fontFamily: "Poppins, sans-serif"
     }}>
 
+      {/* Main Card */}
       <div style={{
-        background: "white",
+        background: "rgba(255,255,255,0.15)",
+        backdropFilter: "blur(12px)",
         padding: "30px",
-        borderRadius: "15px",
-        width: "900px",
+        borderRadius: "18px",
+        width: "950px",
         maxWidth: "100%",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
+        boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+        border: "1px solid rgba(255,255,255,0.2)"
       }}>
 
         {/* Title */}
         <h1 style={{
           textAlign: "center",
           marginBottom: "25px",
-          color: "#333"
+          color: "#fff",
+          fontWeight: "700",
+          letterSpacing: "1px"
         }}>
-          Daily Class Attendance
+          📋 Daily Class Attendance
         </h1>
 
         {/* Grid */}
@@ -91,48 +96,79 @@ export default function App() {
           marginBottom: "25px"
         }}>
 
-          {rollNumbers.map((roll) => (
+          {rollNumbers.map((roll) => {
 
-            <div
-              key={roll}
-              onClick={() => toggleAttendance(roll)}
-              style={{
-                padding: "14px",
-                textAlign: "center",
-                borderRadius: "8px",
-                cursor: "pointer",
-                fontWeight: "bold",
-                transition: "0.2s",
-                backgroundColor: present.includes(roll) ? "#2ecc71" : "#f1f3f5",
-                color: present.includes(roll) ? "white" : "#333",
-                boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
-              }}
-            >
-              {roll}
-            </div>
+            const isPresent = present.includes(roll);
 
-          ))}
+            return (
+              <div
+                key={roll}
+                onClick={() => toggleAttendance(roll)}
+                style={{
+                  padding: "14px",
+                  textAlign: "center",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "0.25s",
+                  transform: isPresent ? "scale(1.05)" : "scale(1)",
+                  background: isPresent
+                    ? "linear-gradient(135deg,#00c853,#64dd17)"
+                    : "rgba(255,255,255,0.2)",
+                  color: isPresent ? "white" : "#fff",
+                  boxShadow: isPresent
+                    ? "0 5px 15px rgba(0,200,83,0.4)"
+                    : "0 2px 5px rgba(0,0,0,0.1)"
+                }}
+              >
+                {roll}
+              </div>
+            );
+          })}
 
         </div>
 
-        {/* Submit Button */}
-        <div style={{ textAlign: "center", marginTop: 10 }}>
+        {/* Buttons Row */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "15px",
+          marginTop: 10
+        }}>
 
           <button
             onClick={submitAttendance}
             style={{
               padding: "14px 28px",
               fontSize: "16px",
-              background: "linear-gradient(135deg,#36d1dc,#5b86e5)",
+              background: "linear-gradient(135deg,#ff512f,#dd2476)",
               color: "white",
               border: "none",
-              borderRadius: "8px",
+              borderRadius: "10px",
               cursor: "pointer",
-              fontWeight: "bold",
-              boxShadow: "0 5px 15px rgba(0,0,0,0.2)"
+              fontWeight: "600",
+              boxShadow: "0 8px 20px rgba(221,36,118,0.4)",
+              transition: "0.2s"
             }}
           >
-            Submit Attendance
+            🚀 Submit
+          </button>
+
+          <button
+            onClick={() => setPresent([])}
+            style={{
+              padding: "14px 20px",
+              fontSize: "14px",
+              background: "linear-gradient(135deg,#434343,#000000)",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              cursor: "pointer",
+              fontWeight: "600",
+              boxShadow: "0 5px 15px rgba(0,0,0,0.4)"
+            }}
+          >
+            Reset
           </button>
 
         </div>
@@ -143,32 +179,32 @@ export default function App() {
           <div style={{
             marginTop: 30,
             padding: 20,
-            borderRadius: "10px",
-            background: "#f8f9fa"
+            borderRadius: "12px",
+            background: "rgba(255,255,255,0.2)",
+            backdropFilter: "blur(8px)",
+            color: "#fff"
           }}>
 
-            <h2>Attendance Summary</h2>
+            <h2>📊 Attendance Summary</h2>
 
-            <p><b>Present Count:</b> {result.presentCount}</p>
-            <p><b>Absent Count:</b> {result.absentCount}</p>
+            <p><b>Present:</b> {result.presentCount}</p>
+            <p><b>Absent:</b> {result.absentCount}</p>
 
-            {/* Present Numbers */}
-            <h3>Present Roll Numbers</h3>
-
+            {/* Present */}
+            <h3>✅ Present</h3>
             <div style={{
-              background: "#e8f5e9",
+              background: "rgba(0,200,83,0.2)",
               padding: "10px",
               borderRadius: "6px",
-              marginBottom: "20px"
+              marginBottom: "15px"
             }}>
               {present.sort((a,b)=>a-b).join(", ")}
             </div>
 
-            {/* Absent Numbers */}
-            <h3>Absent Roll Numbers</h3>
-
+            {/* Absent */}
+            <h3>❌ Absent</h3>
             <div style={{
-              background: "#ffecec",
+              background: "rgba(255,0,0,0.2)",
               padding: "10px",
               borderRadius: "6px",
               marginBottom: "15px"
@@ -180,16 +216,17 @@ export default function App() {
             <button
               onClick={copyAbsent}
               style={{
-                padding: "10px 20px",
-                background: "#27ae60",
+                padding: "12px 22px",
+                background: "linear-gradient(135deg,#00c6ff,#0072ff)",
                 color: "white",
                 border: "none",
-                borderRadius: "6px",
+                borderRadius: "8px",
                 cursor: "pointer",
-                fontWeight: "bold"
+                fontWeight: "600",
+                boxShadow: "0 5px 15px rgba(0,114,255,0.4)"
               }}
             >
-              Copy Absent List
+              📋 Copy Absent List
             </button>
 
           </div>
