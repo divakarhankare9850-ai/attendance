@@ -52,6 +52,15 @@ export default function App() {
     alert("Absent list copied!");
   };
 
+  const copyPresent = () => {
+    if (!result) return;
+
+    const message = `Present Roll Numbers:\n${present.sort((a, b) => a - b).join(", ")}`;
+    navigator.clipboard.writeText(message);
+
+    alert("Present list copied!");
+  };
+
   const attendancePercentage = totalStudents > 0 
     ? Math.round((present.length / totalStudents) * 100) 
     : 0;
@@ -171,6 +180,13 @@ export default function App() {
               <div style={styles.listContent}>
                 {present.sort((a, b) => a - b).join(", ")}
               </div>
+              <button
+                onClick={copyPresent}
+                style={styles.copyPresentButton}
+              >
+                <span style={{ fontSize: "14px", marginRight: "6px" }}>📋</span>
+                Copy Present List
+              </button>
             </div>
 
             {/* Absent List */}
@@ -499,6 +515,24 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     marginTop: "15px"
+  },
+
+  copyPresentButton: {
+    width: "100%",
+    padding: "12px 24px",
+    fontSize: "14px",
+    fontWeight: "700",
+    color: "white",
+    background: "linear-gradient(135deg, #10b981, #34d399)",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer",
+    boxShadow: "0 10px 20px rgba(16, 185, 129, 0.3)",
+    transition: "all 0.3s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "10px"
   }
 };
 
@@ -633,5 +667,5 @@ const cssAnimations = `
       gap: 10px !important;
     }
   }
-`;
+
 
