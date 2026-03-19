@@ -667,5 +667,5 @@ const cssAnimations = `
       gap: 10px !important;
     }
   }
-
+`;
 
