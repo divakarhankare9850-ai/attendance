@@ -69,142 +69,167 @@ export default function App() {
     <div style={styles.container}>
       <style>{cssAnimations}</style>
 
-      {/* Animated Background */}
-      <div style={styles.backgroundEffect}></div>
+      {/* Elegant Background */}
       <div style={styles.backgroundGradient}></div>
+      <div style={styles.backgroundOverlay}></div>
 
-      {/* Main Card */}
-      <div style={styles.mainCard}>
-        {/* Header Section */}
-        <div style={styles.headerSection}>
-          <h1 style={styles.title}>
-            <span style={styles.emoji}>📋</span>
-            <span>Daily Attendance</span>
-          </h1>
+      {/* Main Container */}
+      <div style={styles.wrapper}>
+        {/* Header */}
+        <header style={styles.header}>
+          <div style={styles.headerContent}>
+            <h1 style={styles.mainTitle}>Attendance</h1>
+            <p style={styles.subtitle}>Daily roll call management</p>
+          </div>
+          <div style={styles.dateDisplay}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+        </header>
+
+        {/* Stats Overview */}
+        <div style={styles.statsSection}>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}>✓</div>
+            <div style={styles.statInfo}>
+              <div style={styles.statNumber}>{present.length}</div>
+              <div style={styles.statName}>Present</div>
+            </div>
+          </div>
           
-          <div style={styles.statsContainer}>
-            <div style={styles.statBox}>
-              <span style={styles.statValue}>{present.length}</span>
-              <span style={styles.statLabel}>Present</span>
-            </div>
-            <div style={styles.statDivider}></div>
-            <div style={styles.statBox}>
-              <span style={styles.statValue}>{totalStudents - present.length}</span>
-              <span style={styles.statLabel}>Absent</span>
-            </div>
-            <div style={styles.statDivider}></div>
-            <div style={styles.statBox}>
-              <span style={styles.statValue}>{attendancePercentage}%</span>
-              <span style={styles.statLabel}>Attendance</span>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}>✕</div>
+            <div style={styles.statInfo}>
+              <div style={styles.statNumber}>{totalStudents - present.length}</div>
+              <div style={styles.statName}>Absent</div>
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div style={styles.progressBarContainer}>
-            <div style={{
-              ...styles.progressBar,
-              width: `${attendancePercentage}%`,
-              transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-            }}></div>
+          <div style={styles.statCard}>
+            <div style={styles.statIcon}>%</div>
+            <div style={styles.statInfo}>
+              <div style={styles.statNumber}>{attendancePercentage}%</div>
+              <div style={styles.statName}>Rate</div>
+            </div>
           </div>
         </div>
 
-        {/* Roll Numbers Grid */}
-        <div style={styles.gridContainer}>
-          <div style={styles.grid}>
-            {rollNumbers.map((roll, index) => {
-              const isPresent = present.includes(roll);
-              return (
-                <button
-                  key={roll}
-                  onClick={() => toggleAttendance(roll)}
-                  style={{
-                    ...styles.rollButton,
-                    ...styles.baseButton,
-                    ...(isPresent ? styles.presentButton : styles.absentButton),
-                    animationDelay: `${index * 0.02}s`
-                  }}
-                  className="roll-btn"
-                >
-                  {roll}
-                </button>
-              );
-            })}
+        {/* Progress Bar */}
+        <div style={styles.progressContainer}>
+          <div style={styles.progressTrack}>
+            <div style={{
+              ...styles.progressFill,
+              width: `${attendancePercentage}%`,
+            }}></div>
+          </div>
+          <div style={styles.progressText}>{present.length} of {totalStudents} students</div>
+        </div>
+
+        {/* Roll Numbers Section */}
+        <div style={styles.rollSection}>
+          <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>Mark Attendance</h2>
+            <span style={styles.sectionHint}>{present.length} selected</span>
+          </div>
+
+          <div style={styles.gridContainer}>
+            <div style={styles.grid}>
+              {rollNumbers.map((roll, index) => {
+                const isPresent = present.includes(roll);
+                return (
+                  <button
+                    key={roll}
+                    onClick={() => toggleAttendance(roll)}
+                    style={{
+                      ...styles.rollButton,
+                      ...(isPresent ? styles.rollButtonActive : styles.rollButtonInactive),
+                      animationDelay: `${index * 0.01}s`
+                    }}
+                    className="roll-btn"
+                    title={`Roll ${roll}`}
+                  >
+                    {roll}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div style={styles.actionButtonsContainer}>
+        <div style={styles.actionButtons}>
           <button
             onClick={submitAttendance}
-            style={styles.submitButton}
-            className="pulse-btn"
+            style={styles.submitBtn}
+            className="btn-primary"
           >
-            <span style={{ fontSize: "18px", marginRight: "8px" }}>🚀</span>
-            Submit Attendance
+            Save Attendance
           </button>
 
           <button
             onClick={() => setPresent([])}
-            style={styles.resetButton}
+            style={styles.resetBtn}
+            className="btn-secondary"
           >
-            <span style={{ fontSize: "16px", marginRight: "8px" }}>↻</span>
-            Reset All
+            Clear Selection
           </button>
         </div>
 
-        {/* Result Section */}
+        {/* Results Section */}
         {result && (
-          <div style={styles.resultSection} className="fade-in-up">
-            <h2 style={styles.resultTitle}>📊 Attendance Summary</h2>
+          <div style={styles.resultCard} className="result-appear">
+            <div style={styles.resultHeader}>
+              <h2 style={styles.resultTitle}>Summary</h2>
+              <p style={styles.resultDate}>{today}</p>
+            </div>
 
-            {/* Summary Stats */}
-            <div style={styles.summaryGrid}>
-              <div style={styles.summaryCard}>
-                <div style={styles.summaryNumber}>{result.presentCount}</div>
-                <div style={styles.summaryLabel}>Present</div>
+            {/* Result Stats */}
+            <div style={styles.resultStats}>
+              <div style={styles.resultStat}>
+                <div style={styles.resultStatValue}>{result.presentCount}</div>
+                <div style={styles.resultStatLabel}>Present</div>
               </div>
-              <div style={styles.summaryCard}>
-                <div style={styles.summaryNumber}>{result.absentCount}</div>
-                <div style={styles.summaryLabel}>Absent</div>
+              <div style={styles.resultStatDivider}></div>
+              <div style={styles.resultStat}>
+                <div style={styles.resultStatValue}>{result.absentCount}</div>
+                <div style={styles.resultStatLabel}>Absent</div>
               </div>
-              <div style={styles.summaryCard}>
-                <div style={styles.summaryNumber}>{attendancePercentage}%</div>
-                <div style={styles.summaryLabel}>Rate</div>
+              <div style={styles.resultStatDivider}></div>
+              <div style={styles.resultStat}>
+                <div style={styles.resultStatValue}>{attendancePercentage}%</div>
+                <div style={styles.resultStatLabel}>Attendance</div>
               </div>
             </div>
 
-            {/* Present List */}
-            <div style={styles.listSection}>
-              <h3 style={styles.listTitle}>✅ Present Roll Numbers</h3>
-              <div style={styles.listContent}>
-                {present.sort((a, b) => a - b).join(", ")}
-              </div>
-              <button
-                onClick={copyPresent}
-                style={styles.copyPresentButton}
-              >
-                <span style={{ fontSize: "14px", marginRight: "6px" }}>📋</span>
-                Copy Present List
-              </button>
-            </div>
+            {/* Lists */}
+            <div style={styles.listContainer}>
+              {result.absentCount > 0 && (
+                <div style={styles.listBlock}>
+                  <h3 style={styles.listTitle}>Absent Students</h3>
+                  <div style={styles.listContent}>
+                    {result.absentList.join(", ")}
+                  </div>
+                  <button
+                    onClick={copyAbsent}
+                    style={styles.copyBtn}
+                  >
+                    Copy Absent List
+                  </button>
+                </div>
+              )}
 
-            {/* Absent List */}
-            <div style={styles.listSection}>
-              <h3 style={styles.listTitle}>❌ Absent Roll Numbers</h3>
-              <div style={styles.listContent}>
-                {result.absentList.join(", ")}
-              </div>
+              {present.length > 0 && (
+                <div style={styles.listBlock}>
+                  <h3 style={styles.listTitle}>Present Students</h3>
+                  <div style={styles.listContent}>
+                    {present.sort((a, b) => a - b).join(", ")}
+                  </div>
+                  <button
+                    onClick={copyPresent}
+                    style={styles.copyBtn}
+                  >
+                    Copy Present List
+                  </button>
+                </div>
+              )}
             </div>
-
-            {/* Copy Button */}
-            <button
-              onClick={copyAbsent}
-              style={styles.copyButton}
-            >
-              <span style={{ fontSize: "16px", marginRight: "8px" }}>📋</span>
-              Copy Absent List to Clipboard
-            </button>
           </div>
         )}
       </div>
@@ -215,25 +240,13 @@ export default function App() {
 const styles = {
   container: {
     minHeight: "100vh",
+    background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+    padding: "20px",
     position: "relative",
-    overflow: "hidden",
-    background: "#0f1419",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    padding: "20px",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-  },
-
-  backgroundEffect: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background: "radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%)",
-    zIndex: 1,
-    pointerEvents: "none"
+    alignItems: "flex-start",
+    fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
   },
 
   backgroundGradient: {
@@ -242,301 +255,397 @@ const styles = {
     left: 0,
     width: "100%",
     height: "100%",
-    background: "linear-gradient(135deg, rgba(15, 20, 25, 0.98) 0%, rgba(25, 35, 45, 0.98) 100%)",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    zIndex: 0,
+  },
+
+  backgroundOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)",
     zIndex: 0,
     pointerEvents: "none"
   },
 
-  mainCard: {
+  wrapper: {
     position: "relative",
     zIndex: 10,
-    background: "rgba(255, 255, 255, 0.07)",
-    backdropFilter: "blur(20px)",
-    border: "1px solid rgba(255, 255, 255, 0.15)",
-    borderRadius: "24px",
-    padding: "40px 30px",
-    maxWidth: "1100px",
     width: "100%",
-    boxShadow: "0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-    animation: "slideUp 0.6s ease-out"
+    maxWidth: "900px",
+    paddingTop: "20px",
   },
 
-  headerSection: {
-    marginBottom: "35px",
-    animation: "fadeIn 0.8s ease-out"
-  },
-
-  title: {
-    textAlign: "center",
-    fontSize: "2.5rem",
-    fontWeight: "800",
-    color: "#fff",
-    margin: "0 0 25px 0",
-    letterSpacing: "-0.5px",
+  header: {
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "12px"
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: "40px",
+    animation: "slideDown 0.6s ease-out"
   },
 
-  emoji: {
+  headerContent: {
+    flex: 1,
+  },
+
+  mainTitle: {
     fontSize: "2.8rem",
-    display: "inline-block",
-    animation: "bounce 2s infinite"
+    fontWeight: "800",
+    color: "white",
+    margin: "0",
+    letterSpacing: "-0.8px",
+    lineHeight: "1.1"
   },
 
-  statsContainer: {
+  subtitle: {
+    fontSize: "1rem",
+    color: "rgba(255, 255, 255, 0.8)",
+    margin: "8px 0 0 0",
+    fontWeight: "400",
+    letterSpacing: "0.3px"
+  },
+
+  dateDisplay: {
+    fontSize: "0.95rem",
+    color: "rgba(255, 255, 255, 0.9)",
+    background: "rgba(255, 255, 255, 0.15)",
+    padding: "8px 16px",
+    borderRadius: "8px",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    fontWeight: "500"
+  },
+
+  statsSection: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "16px",
+    marginBottom: "32px",
+    animation: "fadeIn 0.8s ease-out 0.1s backwards"
+  },
+
+  statCard: {
+    background: "rgba(255, 255, 255, 0.95)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    borderRadius: "16px",
+    padding: "20px",
     display: "flex",
-    justifyContent: "center",
     alignItems: "center",
-    gap: "20px",
-    marginBottom: "20px",
-    flexWrap: "wrap"
+    gap: "16px",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    cursor: "default"
   },
 
-  statBox: {
-    textAlign: "center",
-    minWidth: "100px"
+  statIcon: {
+    width: "48px",
+    height: "48px",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "24px",
+    color: "white",
+    fontWeight: "bold",
+    flexShrink: 0
   },
 
-  statValue: {
-    display: "block",
-    fontSize: "2rem",
+  statInfo: {
+    flex: 1,
+  },
+
+  statNumber: {
+    fontSize: "1.8rem",
     fontWeight: "700",
-    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-    backgroundClip: "text",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    marginBottom: "5px"
+    color: "#1a202c",
+    lineHeight: "1"
   },
 
-  statLabel: {
-    display: "block",
+  statName: {
     fontSize: "0.85rem",
-    color: "rgba(255, 255, 255, 0.6)",
+    color: "#718096",
+    fontWeight: "500",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
-    fontWeight: "600"
+    marginTop: "4px"
   },
 
-  statDivider: {
-    width: "1px",
-    height: "50px",
-    background: "rgba(255, 255, 255, 0.1)",
+  progressContainer: {
+    background: "rgba(255, 255, 255, 0.95)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    borderRadius: "16px",
+    padding: "24px",
+    marginBottom: "32px",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+    animation: "fadeIn 0.8s ease-out 0.2s backwards"
   },
 
-  progressBarContainer: {
+  progressTrack: {
     width: "100%",
-    height: "8px",
-    background: "rgba(255, 255, 255, 0.1)",
+    height: "12px",
+    background: "#e2e8f0",
     borderRadius: "10px",
     overflow: "hidden",
-    boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.3)"
+    marginBottom: "12px",
   },
 
-  progressBar: {
+  progressFill: {
     height: "100%",
-    background: "linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)",
+    background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
     borderRadius: "10px",
-    boxShadow: "0 0 20px rgba(99, 102, 241, 0.6)"
+    transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+    boxShadow: "0 0 20px rgba(102, 126, 234, 0.6)"
+  },
+
+  progressText: {
+    textAlign: "center",
+    fontSize: "0.9rem",
+    color: "#4a5568",
+    fontWeight: "500"
+  },
+
+  rollSection: {
+    background: "rgba(255, 255, 255, 0.95)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    borderRadius: "16px",
+    padding: "28px",
+    marginBottom: "28px",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+    animation: "fadeIn 0.8s ease-out 0.3s backwards"
+  },
+
+  sectionHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+  },
+
+  sectionTitle: {
+    fontSize: "1.4rem",
+    fontWeight: "700",
+    color: "#1a202c",
+    margin: "0"
+  },
+
+  sectionHint: {
+    fontSize: "0.9rem",
+    color: "#718096",
+    fontWeight: "500",
+    background: "#edf2f7",
+    padding: "6px 12px",
+    borderRadius: "20px"
   },
 
   gridContainer: {
-    marginBottom: "30px",
     overflowX: "auto",
     overflowY: "hidden",
-    paddingBottom: "10px"
+    paddingBottom: "8px",
+    marginBottom: "-8px"
   },
 
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(50px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fill, minmax(48px, 1fr))",
     gap: "10px",
     minWidth: "100%"
   },
 
-  baseButton: {
+  rollButton: {
     padding: "12px 8px",
-    borderRadius: "12px",
+    borderRadius: "10px",
     border: "none",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "600",
     cursor: "pointer",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    animation: "scaleIn 0.5s ease-out forwards",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    animation: "scaleUp 0.4s ease-out forwards",
   },
 
-  rollButton: {
+  rollButtonActive: {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     color: "white",
-    position: "relative",
-    overflow: "hidden"
-  },
-
-  presentButton: {
-    background: "linear-gradient(135deg, #10b981, #34d399)",
-    boxShadow: "0 8px 16px rgba(16, 185, 129, 0.4)",
+    boxShadow: "0 6px 20px rgba(102, 126, 234, 0.4)",
     transform: "scale(1)"
   },
 
-  absentButton: {
-    background: "rgba(255, 255, 255, 0.08)",
-    color: "rgba(255, 255, 255, 0.7)",
-    border: "1px solid rgba(255, 255, 255, 0.1)"
+  rollButtonInactive: {
+    background: "#f7fafc",
+    color: "#4a5568",
+    border: "1.5px solid #e2e8f0",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)"
   },
 
-  actionButtonsContainer: {
+  actionButtons: {
     display: "flex",
-    justifyContent: "center",
-    gap: "15px",
-    marginBottom: "30px",
-    flexWrap: "wrap"
+    gap: "16px",
+    marginBottom: "28px",
+    animation: "fadeIn 0.8s ease-out 0.4s backwards"
   },
 
-  submitButton: {
-    padding: "14px 32px",
-    fontSize: "16px",
+  submitBtn: {
+    flex: 1,
+    padding: "14px 28px",
+    fontSize: "15px",
     fontWeight: "700",
     color: "white",
-    background: "linear-gradient(135deg, #ec4899, #f43f5e)",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     border: "none",
     borderRadius: "12px",
     cursor: "pointer",
-    boxShadow: "0 15px 30px rgba(236, 72, 153, 0.4)",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    animation: "fadeIn 0.8s ease-out 0.2s backwards"
+    boxShadow: "0 12px 30px rgba(102, 126, 234, 0.35)",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    letterSpacing: "0.3px"
   },
 
-  resetButton: {
+  resetBtn: {
+    flex: 1,
     padding: "14px 28px",
-    fontSize: "16px",
+    fontSize: "15px",
     fontWeight: "700",
-    color: "white",
-    background: "rgba(255, 255, 255, 0.1)",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
+    color: "#4a5568",
+    background: "rgba(255, 255, 255, 0.95)",
+    border: "1.5px solid #e2e8f0",
     borderRadius: "12px",
     cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    animation: "fadeIn 0.8s ease-out 0.3s backwards"
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    letterSpacing: "0.3px",
+    backdropFilter: "blur(20px)"
   },
 
-  resultSection: {
-    padding: "30px",
+  resultCard: {
+    background: "rgba(255, 255, 255, 0.97)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
     borderRadius: "16px",
-    background: "rgba(255, 255, 255, 0.06)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    marginTop: "10px",
-    animation: "fadeInUp 0.6s ease-out"
+    padding: "32px",
+    boxShadow: "0 12px 40px rgba(0, 0, 0, 0.12)",
+    animation: "slideUp 0.6s ease-out"
+  },
+
+  resultHeader: {
+    marginBottom: "28px",
   },
 
   resultTitle: {
-    fontSize: "1.5rem",
-    fontWeight: "700",
-    color: "#fff",
-    marginBottom: "25px",
-    textAlign: "center"
-  },
-
-  summaryGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-    gap: "15px",
-    marginBottom: "25px"
-  },
-
-  summaryCard: {
-    padding: "20px",
-    background: "linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    borderRadius: "12px",
-    textAlign: "center",
-    transition: "all 0.3s ease"
-  },
-
-  summaryNumber: {
-    fontSize: "2rem",
+    fontSize: "1.6rem",
     fontWeight: "800",
-    color: "#fff",
-    marginBottom: "8px"
+    color: "#1a202c",
+    margin: "0 0 4px 0"
   },
 
-  summaryLabel: {
+  resultDate: {
     fontSize: "0.9rem",
-    color: "rgba(255, 255, 255, 0.6)",
+    color: "#718096",
+    margin: "0",
+    fontWeight: "500"
+  },
+
+  resultStats: {
+    display: "flex",
+    justifyContent: "space-around",
+    padding: "24px",
+    background: "#f7fafc",
+    borderRadius: "12px",
+    marginBottom: "28px"
+  },
+
+  resultStat: {
+    textAlign: "center",
+    flex: 1
+  },
+
+  resultStatValue: {
+    fontSize: "2.2rem",
+    fontWeight: "800",
+    color: "#667eea",
+    lineHeight: "1"
+  },
+
+  resultStatLabel: {
+    fontSize: "0.85rem",
+    color: "#718096",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
-    fontWeight: "600"
+    fontWeight: "600",
+    marginTop: "6px"
   },
 
-  listSection: {
-    marginBottom: "20px"
+  resultStatDivider: {
+    width: "1px",
+    height: "50px",
+    background: "#e2e8f0",
+    alignSelf: "center"
+  },
+
+  listContainer: {
+    display: "grid",
+    gap: "20px"
+  },
+
+  listBlock: {
+    padding: "20px",
+    background: "#f7fafc",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0"
   },
 
   listTitle: {
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     fontWeight: "700",
-    color: "#fff",
-    marginBottom: "12px",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
+    color: "#1a202c",
+    margin: "0 0 12px 0"
   },
 
   listContent: {
-    padding: "15px",
-    background: "rgba(255, 255, 255, 0.04)",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    borderRadius: "10px",
-    color: "rgba(255, 255, 255, 0.85)",
+    padding: "14px",
+    background: "white",
+    borderRadius: "8px",
+    color: "#2d3748",
     fontSize: "0.95rem",
     lineHeight: "1.6",
     wordBreak: "break-word",
-    fontFamily: "monospace"
+    fontFamily: "monospace",
+    fontWeight: "500",
+    border: "1px solid #e2e8f0",
+    marginBottom: "12px",
+    maxHeight: "120px",
+    overflowY: "auto"
   },
 
-  copyButton: {
+  copyBtn: {
     width: "100%",
-    padding: "14px 28px",
-    fontSize: "16px",
-    fontWeight: "700",
-    color: "white",
-    background: "linear-gradient(135deg, #06b6d4, #0891b2)",
-    border: "none",
-    borderRadius: "12px",
-    cursor: "pointer",
-    boxShadow: "0 15px 30px rgba(6, 182, 212, 0.3)",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "15px"
-  },
-
-  copyPresentButton: {
-    width: "100%",
-    padding: "12px 24px",
+    padding: "10px 16px",
     fontSize: "14px",
     fontWeight: "700",
     color: "white",
-    background: "linear-gradient(135deg, #10b981, #34d399)",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
-    boxShadow: "0 10px 20px rgba(16, 185, 129, 0.3)",
     transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "10px"
+    boxShadow: "0 4px 12px rgba(102, 126, 234, 0.25)"
   }
 };
 
 const cssAnimations = `
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @keyframes slideUp {
     from {
       opacity: 0;
@@ -557,21 +666,10 @@ const cssAnimations = `
     }
   }
 
-  @keyframes fadeInUp {
+  @keyframes scaleUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.85);
     }
     to {
       opacity: 1;
@@ -579,93 +677,119 @@ const cssAnimations = `
     }
   }
 
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 15px 30px rgba(236, 72, 153, 0.4);
-    }
-    50% {
-      box-shadow: 0 15px 40px rgba(236, 72, 153, 0.6);
-    }
-  }
-
-  .pulse-btn {
-    animation: pulse 2s infinite !important;
-  }
-
   .roll-btn:hover {
-    transform: scale(1.08) !important;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3) !important;
   }
 
   .roll-btn:active {
-    transform: scale(0.95) !important;
+    transform: translateY(0) scale(0.95);
   }
 
-  button:hover {
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(102, 126, 234, 0.45) !important;
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: #cbd5e0;
     transform: translateY(-2px);
   }
 
-  button:active {
+  .btn-secondary:active {
     transform: translateY(0);
+  }
+
+  .result-appear {
+    animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .statCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Scrollbar Styling */
+  div::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  div::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  div::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+  }
+
+  div::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
   }
 
   /* Responsive Design */
   @media (max-width: 768px) {
-    div[style*="padding: 40px 30px"] {
-      padding: 25px 20px !important;
+    h1[style*="fontSize: 2.8rem"] {
+      font-size: 2.2rem !important;
     }
 
-    h1[style*="fontSize: 2.5rem"] {
-      font-size: 2rem !important;
+    div[style*="display: grid"][style*="gridTemplateColumns: repeat(3"] {
+      grid-template-columns: 1fr !important;
     }
 
-    div[style*="display: grid"][style*="gridTemplateColumns: repeat"] {
-      grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)) !important;
+    div[style*="display: flex"][style*="justifyContent: space-between"] {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    div[style*="display: grid"][style*="gridTemplateColumns: repeat(auto-fill"] {
+      grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)) !important;
       gap: 8px !important;
     }
 
-    button[style*="padding: 14px 32px"] {
-      padding: 12px 24px !important;
-      font-size: 15px !important;
+    button[style*="flex: 1"] {
+      padding: 12px 20px !important;
+      font-size: 14px !important;
     }
   }
 
   @media (max-width: 480px) {
-    div[style*="padding: 40px 30px"] {
-      padding: 20px 15px !important;
+    h1[style*="fontSize: 2.8rem"] {
+      font-size: 1.8rem !important;
     }
 
-    h1[style*="fontSize: 2.5rem"] {
-      font-size: 1.5rem !important;
+    div[style*="display: grid"][style*="gridTemplateColumns: repeat(3"] {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
     }
 
-    div[style*="display: grid"][style*="gridTemplateColumns: repeat"] {
-      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)) !important;
+    div[style*="padding: 20px"][style*="display: flex"][style*="gap: 16px"] {
+      padding: 16px !important;
+      flex-direction: column;
+      gap: 12px !important;
+    }
+
+    div[style*="display: grid"][style*="gridTemplateColumns: repeat(auto-fill"] {
+      grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)) !important;
       gap: 6px !important;
     }
 
-    div[style*="fontSize: 2rem"][style*="fontWeight: 700"][style*="marginBottom: 5px"] {
-      font-size: 1.5rem !important;
-    }
-
-    button[style*="padding: 14px 32px"] {
-      padding: 10px 20px !important;
+    button[style*="padding: 14px 28px"] {
+      padding: 12px 20px !important;
       font-size: 14px !important;
-      flex: 1;
     }
 
-    div[style*="display: flex"][style*="justifyContent: center"][style*="gap: 20px"] {
-      flex-direction: column !important;
-      gap: 10px !important;
+    div[style*="padding: 28px"] {
+      padding: 20px !important;
+    }
+
+    div[style*="padding: 32px"] {
+      padding: 20px !important;
     }
   }
 `;
-
